@@ -38,6 +38,9 @@ import twitter_info
 
 ## Get your secret values to authenticate to Twitter. You may replace each of these with variables rather than filling in the empty strings if you choose to do the secure way for 50 EC points
 
+# Using my personal Twitter account information (@TheDavidNguyen) within another twitter_info.py file
+# if you want to run my code, replace the consumer_keys with your own keys!
+
 consumer_key = twitter_info.consumer_key
 consumer_secret = twitter_info.consumer_secret
 access_token = twitter_info.access_token
@@ -69,7 +72,60 @@ try:
 
 except:
 
-    CACHE_DICTION = {}
+    CACHE_DICTION = {} # if there is nothing there, make sure that CACHE_DICTION is empty!
+
+
+def get_twitter_data(search_request):
+
+    if search_request in CACHE_DICTION:
+        print ("\n" + "USING CACHED DATA FOR: " + search_request + "\n")
+
+        twitter_search_results = CACHE_DICTION[search_request]
+
+    else:
+        
+        try:
+
+            print ("\n" +"GETTING NEW DATA FOR: " + search_request + "\n")
+
+            twitter_search_results = api.search(q=search_request)
+
+            CACHE_DICTION[search_request] = twitter_search_results
+
+            cached_file = open(CACHE_FNAME,'w')
+
+            cached_file.write(json.dumps(CACHE_DICTION, indent=2))
+
+            cached_file.close()
+
+        except:
+            print ("ERROR 404: THERE IS NO CACHED DATA FOR: " + search_request + "\n")
+            print ("PLEASE CHECK YOUR NETWORK CONNECTION")
+            exit()
+
+    return twitter_search_results
+
+
+
+def run_program():
+    print ("Welcome to David's Twitter API Program!" + "\n")
+
+    print ("What would you like to search on the Twitterverse?" + "\n")
+
+    search_word = input("Enter your search query here: " + "\n")
+
+    compiled_tweets = get_twitter_data(search_word)
+
+    for a_tweet in compiled_tweets['statuses'][:3]:
+        print ("FROM: " + "@"+a_tweet['user']['screen_name'])
+        print ("TEXT: " + a_tweet['text'])
+        print ("CREATED AT: " + a_tweet['created_at'])
+        print ("\n")
+
+
+
+run_program()
+
 
 
 
