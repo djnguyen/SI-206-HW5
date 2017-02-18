@@ -2,7 +2,7 @@ import unittest
 import tweepy
 import requests
 import json
-import twitter_info
+import twitter_info #secret file that you cannot see!
 
 ## SI 206 - W17 - HW5
 ## David Nguyen (djnguyen)
@@ -77,54 +77,56 @@ except:
 
 def get_twitter_data(search_request):
 
-    if search_request in CACHE_DICTION:
-        print ("\n" + "USING CACHED DATA FOR: " + search_request + "\n")
+    if search_request in CACHE_DICTION: #seeing if the search request is in the CACHE_DICTION
+        print ("\n" + "USING CACHED DATA FOR: " + search_request + "\n") #print a nice message
 
-        twitter_search_results = CACHE_DICTION[search_request]
+        twitter_search_results = CACHE_DICTION[search_request] #make that data into twitter_search_results
 
-    else:
+    else: #if new data needs to be fetched
         
         try:
 
-            print ("\n" +"GETTING NEW DATA FOR: " + search_request + "\n")
+            print ("\n" +"GETTING NEW DATA FOR: " + search_request + "\n") #nice message
 
-            twitter_search_results = api.search(q=search_request)
+            twitter_search_results = api.search(q=search_request) #calling the Twitter API for data
 
-            CACHE_DICTION[search_request] = twitter_search_results
+            CACHE_DICTION[search_request] = twitter_search_results 
 
-            cached_file = open(CACHE_FNAME,'w')
+            cached_file = open(CACHE_FNAME,'w') #writing into cached file
 
-            cached_file.write(json.dumps(CACHE_DICTION, indent=2))
+            cached_file.write(json.dumps(CACHE_DICTION, indent=2)) #dumping info into cached file and making it look pretty
 
-            cached_file.close()
+            cached_file.close() #close the file
 
-        except:
+        except: #if the user is OFFLINE and tries to make a twitter search for something not in the cached data
             print ("ERROR 404: THERE IS NO CACHED DATA FOR: " + search_request + "\n")
-            print ("PLEASE CHECK YOUR NETWORK CONNECTION")
-            exit()
+            print ("PLEASE CHECK YOUR NETWORK CONNECTION") #printing out an error message
+            exit() #exits the program to start over!
 
-    return twitter_search_results
+    return twitter_search_results #json object is returned from this function
 
 
 
-def run_program():
-    print ("Welcome to David's Twitter API Program!" + "\n")
+def run_program(): #function for running program
+    print ("Welcome to David's Twitter API Program!" + "\n") #Nice message interface
 
     print ("What would you like to search on the Twitterverse?" + "\n")
 
-    search_word = input("Enter your search query here: " + "\n")
+    search_word = input("Enter your search query here: " + "\n") #user inputs their search query
 
-    compiled_tweets = get_twitter_data(search_word)
+    compiled_tweets = get_twitter_data(search_word) #make the twitter search using API or cached file
 
     for a_tweet in compiled_tweets['statuses'][:3]:
-        print ("FROM: " + "@"+a_tweet['user']['screen_name'])
-        print ("TEXT: " + a_tweet['text'])
-        print ("CREATED AT: " + a_tweet['created_at'])
-        print ("\n")
+        # print ("FROM: " + "@"+a_tweet['user']['screen_name']) #if we wanted to print who tweeted it
+        print ("TEXT: " + a_tweet['text']) #twitter text
+        print ("CREATED AT: " + a_tweet['created_at'] + "\n") #printed created at time and NEWLINE
+        #print ("\n") #printed a new line
 
 
 
-run_program()
+run_program() #running the program
+
+# In my cached file, I searched up "UMSI" and "rock climbing" (case sensitive) on the Tweepy API
 
 
 
